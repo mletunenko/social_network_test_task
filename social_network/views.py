@@ -20,25 +20,25 @@ def user_registration(request):
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-@api_view(['POST'])
-def login_view(request):
-    username = request.data['username']
-    password = request.data['password']
-    user = authenticate(request, username=username, password=password)
-    if user is not None:
-        login(request, user)
-        return Response()
-    else:
-        data = {
-            'response': 'Invalid login/password'
-        }
-        return Response(data)
-
-
-@api_view(['POST'])
-def logout_view(request):
-    logout(request)
-    return Response()
+# @api_view(['POST'])
+# def login_view(request):
+#     username = request.data['username']
+#     password = request.data['password']
+#     user = authenticate(request, username=username, password=password)
+#     if user is not None:
+#         login(request, user)
+#         return Response()
+#     else:
+#         data = {
+#             'response': 'Invalid login/password'
+#         }
+#         return Response(data)
+#
+#
+# @api_view(['POST'])
+# def logout_view(request):
+#     logout(request)
+#     return Response()
 
 
 class PostViewSet(viewsets.ModelViewSet):
