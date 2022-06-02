@@ -56,8 +56,7 @@ class PostViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
         if instance.author != request.user:
             return Response(status=status.HTTP_403_FORBIDDEN)
-
-        # request.data.pop('author', None)
+        request.data['author'] = request.user.id
         serializer = self.get_serializer(instance, data=request.data, partial=kwargs.pop('partial', False))
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
