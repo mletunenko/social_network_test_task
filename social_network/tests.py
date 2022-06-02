@@ -1,4 +1,3 @@
-from django.test import TestCase
 from django.urls import reverse
 from rest_framework.test import APITestCase
 from .factorys import UserFactory, PostFactory
@@ -50,7 +49,8 @@ class PostTest(APITestCase):
         post = PostFactory()
         data = {
             "title": post.title,
-            "content": post.content
+            "content": post.content,
+            "author": user.id
         }
         response = self.client.post('/post/', data=data)
         self.assertEqual(response.status_code, 201)
