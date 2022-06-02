@@ -49,15 +49,21 @@ class PostViewSet(viewsets.ModelViewSet):
         if not request.user.is_authenticated:
             return Response(status=status.HTTP_403_FORBIDDEN)
 
-        request.data['author'] = request.user.id
-        return super().create(request, *args, **kwargs)
+        data = request.data.dict()
+        data['author'] = request.user.id
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
         if instance.author != request.user:
             return Response(status=status.HTTP_403_FORBIDDEN)
-        request.data['author'] = request.user.id
-        serializer = self.get_serializer(instance, data=request.data, partial=kwargs.pop('partial', False))
+        data = request.data.dict()
+        data['author'] = request.user.id
+        serializer = self.get_serializer(instance, data=data, partial=kwargs.pop('partial', False))
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
         return Response(serializer.data)
