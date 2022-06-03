@@ -4,17 +4,24 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from social_network.models import Post
 from social_network.serializers import UserSerializer, PostSerializer
+import requests
+from social_network.config import API_KEY
+
 
 
 @api_view(['POST'])
 def user_registration(request):
     data = request.data
-    serializer = UserSerializer(data=data)
-    serializer.is_valid(raise_exception=True)
-    serializer.save()
-    serializer.instance.set_password(data['password'])
-    serializer.instance.save()
-    return Response(serializer.data, status=status.HTTP_201_CREATED)
+    query = f'https://api.hunter.io/v2/email-verifier?email={data["email"]}&api_key={API_KEY}'
+    response = requests.get(query)
+    if response.status_code==200:
+        serializer = UserSerializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        serializer.instance.set_password(data['password'])
+        serializer.instance.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response('Bad email', status=status.HTTP_400_BAD_REQUEST)
 
 
 class PostViewSet(viewsets.ModelViewSet):
